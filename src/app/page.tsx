@@ -40,7 +40,7 @@ export default function WelcomePage() {
                         SKYPORT
                     </h1>
                     <p className="text-xl md:text-2xl mt-4 mb-10 opacity-90 font-light" style={{ animationDelay: '0.3s', animationName: 'fade-in', animationFillMode: 'backwards' }}>
-                        Book your journey with ease and comfort.
+                        Your Gateway to the Skies
                     </p>
                 </div>
                 
