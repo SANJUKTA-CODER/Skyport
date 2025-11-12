@@ -35,7 +35,7 @@ export function SeatSelection({
         {seatRows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex items-center gap-2">
             {row.map((seat, seatIndex) => (
-              <>
+              <React.Fragment key={seat.id}>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <button
@@ -60,7 +60,7 @@ export function SeatSelection({
                     </TooltipContent>
                 </Tooltip>
                 {seatIndex === 2 && <div className="w-6" />}
-              </>
+              </React.Fragment>
             ))}
           </div>
         ))}

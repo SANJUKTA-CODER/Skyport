@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ArrowRight, Calendar, Clock, Plane } from "lucide-react";
 import Link from 'next/link';
