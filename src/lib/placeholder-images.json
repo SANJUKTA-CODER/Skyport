@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-skyport",
+      "description": "Airplane wing flying above the clouds at sunset.",
+      "imageUrl": "https://images.unsplash.com/photo-1605590427165-3884d6aa6731?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhaXJwbGFuZSUyMHNreXxlbnwwfHx8fDE3NjI4NTM5NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "airplane sky"
+    },
+    {
+      "id": "airline-logo-1",
+      "description": "Generic airline logo.",
+      "imageUrl": "https://images.unsplash.com/photo-1563694983011-6f4d90358083?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "logo"
+    },
+    {
+      "id": "airline-logo-2",
+      "description": "Generic airline logo.",
+      "imageUrl": "https://images.unsplash.com/photo-1496200186974-4293800e2c20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "logo"
+    },
+    {
+      "id": "airline-logo-3",
+      "description": "Generic airline logo.",
+      "imageUrl": "https://images.unsplash.com/photo-1620288627223-53302f4e8c74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "logo"
+    },
+    {
+      "id": "popular-route-1",
+      "description": "Image of London.",
+      "imageUrl": "https://images.unsplash.com/photo-1500365255-2cb778f578ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bG9uZG9uJTIwY2l0eXxlbnwwfHx8fDE3NjI5MTgwNjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "london city"
+    },
+    {
+      "id": "popular-route-2",
+      "description": "Image of Tokyo.",
+      "imageUrl": "https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0b2t5byUyMGNpdHl8ZW58MHx8fHwxNzYyOTU5NTA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tokyo city"
+    },
+    {
+      "id": "popular-route-3",
+      "description": "Image of Los Angeles.",
+      "imageUrl": "https://images.unsplash.com/photo-1429554429301-1c7d5ae2d42e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsb3MlMjBhbmdlbGVzfGVufDB8fHx8MTc2MjkxMDE5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "los angeles"
+    },
+    {
+      "id": "popular-route-4",
+      "description": "Image of Singapore.",
+      "imageUrl": "https://images.unsplash.com/photo-1542114740389-9b46fb1e5be7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c2luZ2Fwb3JlJTIwY2l0eXxlbnwwfHx8fDE3NjI5NTk1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "singapore city"
+    },
+    {
+      "id": "popular-route-5",
+      "description": "Image of Frankfurt.",
+      "imageUrl": "https://images.unsplash.com/photo-1713047109827-38151ad07b0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmcmFua2Z1cnQlMjBjaXR5fGVufDB8fHx8MTc2Mjk1OTUwOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "frankfurt city"
+    },
+    {
+      "id": "profile-avatar",
+      "description": "Profile avatar.",
+      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjI5MzU5MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    }
+  ]
 }
