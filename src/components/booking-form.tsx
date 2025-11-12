@@ -18,11 +18,11 @@ import type { Flight } from "@/lib/data";
 import { SeatSelection } from "@/components/seat-selection";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const bookingFormSchema = z.object({
   passengerName: z.string().min(2, "Name must be at least 2 characters."),
   passengerEmail: z.string().email("Please enter a valid email address."),
-  password: z.string().min(6, "Password must be at least 6 characters."),
   selectedSeat: z.string().min(1, "Please select a seat."),
 });
 
@@ -34,10 +34,10 @@ export function BookingForm({ flight }: { flight: Flight }) {
 
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
+    mode: "onChange",
     defaultValues: {
       passengerName: "",
       passengerEmail: "",
-      password: "",
       selectedSeat: "",
     },
   });
@@ -74,39 +74,26 @@ export function BookingForm({ flight }: { flight: Flight }) {
             <FormField
               control={form.control}
               name="passengerName"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="John Doe" {...field} className={cn(fieldState.invalid ? 'border-destructive' : fieldState.isDirty && !fieldState.invalid ? 'border-green-500' : '')} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-destructive text-xs" />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
               name="passengerEmail"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="john.doe@example.com" {...field} />
+                    <Input placeholder="john.doe@example.com" {...field} className={cn(fieldState.invalid ? 'border-destructive' : fieldState.isDirty && !fieldState.invalid ? 'border-green-500' : '')} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Create a Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-destructive text-xs" />
                 </FormItem>
               )}
             />
@@ -131,7 +118,7 @@ export function BookingForm({ flight }: { flight: Flight }) {
                       onSelectSeat={field.onChange}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-destructive text-xs" />
                 </FormItem>
               )}
             />

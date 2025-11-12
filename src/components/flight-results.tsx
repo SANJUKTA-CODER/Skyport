@@ -12,7 +12,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Plane, ArrowRight, Clock, Globe } from "lucide-react";
 import { format } from 'date-fns';
-import { Skeleton } from "@/components/ui/skeleton";
 
 function FlightCard({ flight }: { flight: Flight }) {
   const formatTime = (date: Date) => format(date, 'HH:mm');
@@ -52,8 +51,8 @@ function FlightCard({ flight }: { flight: Flight }) {
         </div>
 
         <div className="col-span-6 md:col-span-1 text-right space-y-1">
-          <p className="font-bold text-xl text-primary">${flight.price}</p>
-          <Button asChild size="sm" className="w-full bg-accent hover:bg-accent/90">
+          <p className="font-bold text-xl text-primary">₹{flight.price.toLocaleString('en-IN')}</p>
+          <Button asChild size="sm" className="w-full bg-accent hover:bg-accent/90 btn-glow">
             <Link href={`/booking?flightId=${flight.id}`}>Book Now</Link>
           </Button>
         </div>
@@ -83,7 +82,7 @@ export default function FlightResults() {
   const [filteredFlights, setFilteredFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 15000]);
   const [durationRange, setDurationRange] = useState([0, 600]);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   
@@ -147,7 +146,7 @@ export default function FlightResults() {
   }
 
   const minPrice = flights.length > 0 ? Math.min(...flights.map(f => f.price)) : 0;
-  const maxPrice = flights.length > 0 ? Math.max(...flights.map(f => f.price)) : 1000;
+  const maxPrice = flights.length > 0 ? Math.max(...flights.map(f => f.price)) : 15000;
   const minDuration = flights.length > 0 ? Math.min(...flights.map(f => f.durationMinutes)) : 0;
   const maxDuration = flights.length > 0 ? Math.max(...flights.map(f => f.durationMinutes)) : 600;
 
@@ -171,11 +170,11 @@ export default function FlightResults() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <Label>Price Range: ${priceRange[0]} - ${priceRange[1]}</Label>
+                <Label>Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}</Label>
                 <Slider
                   min={minPrice}
                   max={maxPrice}
-                  step={10}
+                  step={500}
                   value={priceRange}
                   onValueChange={setPriceRange}
                   className="mt-2"

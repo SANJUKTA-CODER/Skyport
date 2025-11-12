@@ -33,7 +33,7 @@ export default function SplashPage() {
                     </p>
                 </div>
                 
-                <Link href="/home" passHref>
+                <Link href="/login" passHref>
                     <Button
                         size="lg"
                         className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg py-7 px-10 rounded-full transition-all duration-300 hover:scale-105 btn-glow animate-pulse"

@@ -34,7 +34,7 @@ export function SiteHeader() {
                 <span className="sr-only">Profile</span>
              </Link>
            </Button>
-           <Button asChild variant="ghost" size="icon">
+           <Button asChild variant="ghost" size="icon" className="hidden">
              <Link href="/admin">
                 <Shield className="h-5 w-5" />
                 <span className="sr-only">Admin</span>

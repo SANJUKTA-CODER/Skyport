@@ -44,22 +44,30 @@ export type Booking = {
 
 // Mock Data
 export const CITIES: City[] = [
-  { name: 'New York', code: 'JFK' },
+  { name: 'Kolkata', code: 'CCU' },
+  { name: 'Delhi', code: 'DEL' },
+  { name: 'Mumbai', code: 'BOM' },
+  { name: 'Bangalore', code: 'BLR' },
+  { name: 'Hyderabad', code: 'HYD' },
+  { name: 'Chennai', code: 'MAA' },
+  { name: 'Pune', code: 'PNQ' },
+  { name: 'Ahmedabad', code: 'AMD' },
+  { name: 'Kochi', code: 'COK' },
+  { name: 'Jaipur', code: 'JAI' },
+  { name: 'Lucknow', code: 'LKO' },
+  { name: 'Guwahati', code: 'GAU' },
   { name: 'London', code: 'LHR' },
-  { name: 'Tokyo', code: 'HND' },
-  { name: 'Paris', code: 'CDG' },
-  { name: 'Sydney', code: 'SYD' },
   { name: 'Dubai', code: 'DXB' },
-  { name: 'Los Angeles', code: 'LAX' },
   { name: 'Singapore', code: 'SIN' },
-  { name: 'Hong Kong', code: 'HKG' },
-  { name: 'Frankfurt', code: 'FRA' },
+  { name: 'New York', code: 'JFK' },
 ];
 
 export const AIRLINES: Airline[] = [
-  { name: 'SkyBlue Airways', code: 'SA', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-1')?.imageUrl || '' },
-  { name: 'Global Wings', code: 'GW', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-2')?.imageUrl || '' },
-  { name: 'Horizon Flights', code: 'HF', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-3')?.imageUrl || '' },
+  { name: 'Air India', code: 'AI', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-1')?.imageUrl || '' },
+  { name: 'IndiGo', code: '6E', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-2')?.imageUrl || '' },
+  { name: 'Vistara', code: 'UK', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-3')?.imageUrl || '' },
+  { name: 'SpiceJet', code: 'SG', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-4')?.imageUrl || '' },
+  { name: 'Akasa Air', code: 'QP', logoUrl: PlaceHolderImages.find(p => p.id === 'airline-logo-5')?.imageUrl || '' },
 ];
 
 function generateSeats(): Seat[] {
@@ -83,9 +91,9 @@ const generateRandomFlight = (id: number, from: City, to: City): Flight => {
   departureTime.setDate(departureTime.getDate() + Math.floor(Math.random() * 14) + 1);
   departureTime.setHours(Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
 
-  const durationMinutes = Math.floor(Math.random() * 300) + 120; // 2 to 7 hours
+  const durationMinutes = Math.floor(Math.random() * 240) + 60; // 1 to 5 hours
   const arrivalTime = new Date(departureTime.getTime() + durationMinutes * 60000);
-  const price = Math.floor(Math.random() * 800) + 200;
+  const price = Math.floor(Math.random() * 8000) + 4000; // Price in INR
 
   return {
     id: `FL${1000 + id}`,

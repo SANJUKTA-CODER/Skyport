@@ -8,20 +8,32 @@
     },
     {
       "id": "airline-logo-1",
-      "description": "Generic airline logo.",
-      "imageUrl": "https://images.unsplash.com/photo-1563694983011-6f4d90358083?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "Generic airline logo for Air India.",
+      "imageUrl": "https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "logo"
     },
     {
       "id": "airline-logo-2",
-      "description": "Generic airline logo.",
-      "imageUrl": "https://images.unsplash.com/photo-1496200186974-4293800e2c20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "Generic airline logo for IndiGo.",
+      "imageUrl": "https://images.unsplash.com/photo-1545231027-637d2f6210f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "logo"
     },
     {
       "id": "airline-logo-3",
-      "description": "Generic airline logo.",
-      "imageUrl": "https://images.unsplash.com/photo-1620288627223-53302f4e8c74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "Generic airline logo for Vistara.",
+      "imageUrl": "https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "logo"
+    },
+    {
+      "id": "airline-logo-4",
+      "description": "Generic airline logo for SpiceJet.",
+      "imageUrl": "https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "logo"
+    },
+    {
+      "id": "airline-logo-5",
+      "description": "Generic airline logo for Akasa Air.",
+      "imageUrl": "https://images.unsplash.com/photo-1584441405886-bc91be61e56a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsb2dvfGVufDB8fHx8MTc2MjkxMzk1MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "logo"
     },
     {

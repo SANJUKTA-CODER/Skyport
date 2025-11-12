@@ -41,12 +41,20 @@ import {
 import { CITIES } from "@/lib/data";
 
 const searchFormSchema = z.object({
-  from: z.string().min(1, "Please select a departure city"),
-  to: z.string().min(1, "Please select a destination city"),
-  departureDate: z.date({ required_error: "Please select a departure date" }),
+  from: z.string().min(1, "Please select a departure city").regex(/^[a-zA-Z\s]+$/, "Enter a valid city name"),
+  to: z.string().min(1, "Please select a destination city").regex(/^[a-zA-Z\s]+$/, "Enter a valid city name"),
+  journeyDate: z.date({ required_error: "Please select a journey date" }),
+  returnDate: z.date().optional(),
   passengers: z.number().min(1, "At least one passenger is required").max(8, "Maximum of 8 passengers"),
   travelClass: z.string().optional(),
+}).refine(data => data.from !== data.to, {
+  message: "Departure and Destination cannot be the same.",
+  path: ["to"],
+}).refine(data => !data.returnDate || data.returnDate > data.journeyDate, {
+  message: "Return date must be after journey date.",
+  path: ["returnDate"],
 });
+
 
 type SearchFormValues = z.infer<typeof searchFormSchema>;
 
@@ -55,6 +63,7 @@ export function SearchForm() {
 
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
+    mode: "onChange",
     defaultValues: {
       from: "",
       to: "",
@@ -65,18 +74,21 @@ export function SearchForm() {
 
   const onSubmit = (data: SearchFormValues) => {
     const params = new URLSearchParams({
-      from: data.from,
-      to: data.to,
-      date: format(data.departureDate, "yyyy-MM-dd"),
+      from: CITIES.find(c => c.name === data.from)?.code || '',
+      to: CITIES.find(c => c.name === data.to)?.code || '',
+      date: format(data.journeyDate, "yyyy-MM-dd"),
       passengers: String(data.passengers),
     });
+    if (data.returnDate) {
+      params.append('returnDate', format(data.returnDate, "yyyy-MM-dd"));
+    }
     if (data.travelClass) {
       params.append('class', data.travelClass);
     }
     router.push(`/flights?${params.toString()}`);
   };
 
-  const CityCombobox = ({ field, placeholder }: { field: any; placeholder: string }) => {
+  const CityCombobox = ({ field, placeholder, name }: { field: any; placeholder: string, name: "from" | "to" }) => {
     return (
       <Popover>
         <PopoverTrigger asChild>
@@ -86,14 +98,13 @@ export function SearchForm() {
               role="combobox"
               className={cn(
                 "w-full justify-between text-left font-normal h-11",
-                !field.value && "text-muted-foreground"
+                !field.value && "text-muted-foreground",
+                form.getFieldState(name).invalid ? "border-destructive" : form.getFieldState(name).isDirty && !form.getFieldState(name).invalid ? "border-green-500" : ""
               )}
             >
               <div className="flex items-center gap-2">
                 <Plane className="h-4 w-4" />
-                {field.value
-                  ? CITIES.find((city) => city.code === field.value)?.name
-                  : placeholder}
+                {field.value || placeholder}
               </div>
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -110,13 +121,13 @@ export function SearchForm() {
                     value={city.name}
                     key={city.code}
                     onSelect={() => {
-                      form.setValue(field.name, city.code);
+                      form.setValue(field.name, city.name);
                     }}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        city.code === field.value ? "opacity-100" : "opacity-0"
+                        city.name === field.value ? "opacity-100" : "opacity-0"
                       )}
                     />
                     {city.name} ({city.code})
@@ -134,7 +145,7 @@ export function SearchForm() {
     <Card className="bg-background/80 backdrop-blur-sm">
       <CardContent className="p-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-start">
             
             <div className="lg:col-span-3 md:col-span-1">
               <FormField
@@ -143,8 +154,8 @@ export function SearchForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>From</FormLabel>
-                    <CityCombobox field={field} placeholder="Departure city" />
-                    <FormMessage />
+                    <CityCombobox field={field} placeholder="Departure city" name="from"/>
+                    <FormMessage className="text-destructive text-xs fade-in" />
                   </FormItem>
                 )}
               />
@@ -157,8 +168,8 @@ export function SearchForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>To</FormLabel>
-                    <CityCombobox field={field} placeholder="Destination city" />
-                    <FormMessage />
+                    <CityCombobox field={field} placeholder="Destination city" name="to"/>
+                    <FormMessage className="text-destructive text-xs fade-in" />
                   </FormItem>
                 )}
               />
@@ -167,10 +178,10 @@ export function SearchForm() {
             <div className="lg:col-span-2">
               <FormField
                 control={form.control}
-                name="departureDate"
-                render={({ field }) => (
+                name="journeyDate"
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Departure</FormLabel>
+                    <FormLabel>Journey Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -178,7 +189,8 @@ export function SearchForm() {
                             variant={"outline"}
                             className={cn(
                               "w-full pl-3 text-left font-normal h-11",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
+                              fieldState.invalid ? "border-destructive" : ""
                             )}
                           >
                             {field.value ? (
@@ -200,14 +212,57 @@ export function SearchForm() {
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormMessage />
+                    <FormMessage className="text-destructive text-xs fade-in" />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="lg:col-span-2">
+              <FormField
+                control={form.control}
+                name="returnDate"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel>Return Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal h-11",
+                              !field.value && "text-muted-foreground",
+                               fieldState.invalid ? "border-destructive" : ""
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date (Optional)</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date < (form.getValues("journeyDate") || new Date())}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                     <FormMessage className="text-destructive text-xs fade-in" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="lg:col-span-1">
-              <FormField
+            <div className="lg:col-span-2 grid grid-cols-2 gap-2">
+               <FormField
                 control={form.control}
                 name="passengers"
                 render={({ field }) => (
@@ -247,13 +302,10 @@ export function SearchForm() {
                             </div>
                         </PopoverContent>
                     </Popover>
-                    <FormMessage />
+                    <FormMessage className="text-destructive text-xs fade-in" />
                   </FormItem>
                 )}
               />
-            </div>
-            
-            <div className="lg:col-span-2">
                 <FormField
                   control={form.control}
                   name="travelClass"
@@ -275,14 +327,15 @@ export function SearchForm() {
                           <SelectItem value="first">First</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-destructive text-xs fade-in" />
                     </FormItem>
                   )}
                 />
             </div>
+            
 
-            <Button type="submit" className="lg:col-span-1 w-full" size="lg">
-              Search
+            <Button type="submit" className="lg:col-span-12 w-full mt-4" size="lg">
+              Search Flights
             </Button>
           </form>
         </Form>

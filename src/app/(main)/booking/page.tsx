@@ -55,7 +55,7 @@ function BookingPageContent() {
                             </div>
                             <div className="border-t pt-4 mt-4 flex justify-between items-center">
                                 <span className="font-semibold">Total Price</span>
-                                <span className="text-xl font-bold text-primary">${flight.price}</span>
+                                <span className="text-xl font-bold text-primary">₹{flight.price.toLocaleString('en-IN')}</span>
                             </div>
                         </CardContent>
                     </Card>
