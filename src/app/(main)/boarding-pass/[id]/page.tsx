@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useBooking } from "@/context/booking-context";
@@ -9,9 +10,9 @@ export default function BoardingPassPage() {
     const { id } = useParams();
     const { bookings } = useBooking();
     const router = useRouter();
-
-    // The booking data might have string dates, so we parse them.
-    const booking = bookings.find(b => b.id === id);
+    
+    const bookingIdPrefix = Array.isArray(id) ? id[0].split('-')[0] : id.split('-')[0];
+    const booking = bookings.find(b => b.id.startsWith(bookingIdPrefix));
 
     if (!booking) {
         return (
@@ -23,11 +24,18 @@ export default function BoardingPassPage() {
         );
     }
     
+    // Find all passengers for this booking
+    const relatedBookings = bookings.filter(b => b.id.startsWith(bookingIdPrefix));
+    
     return (
         <div className="py-12 gradient-sky">
-            <div className="container mx-auto max-w-lg">
-                <BoardingPass booking={booking} />
+            <div className="container mx-auto max-w-lg space-y-8">
+                {relatedBookings.map(b => (
+                    <BoardingPass key={b.id} booking={b} />
+                ))}
             </div>
         </div>
     );
 }
+
+    

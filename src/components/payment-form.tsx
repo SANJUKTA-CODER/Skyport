@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -6,7 +7,7 @@ import { ALL_FLIGHTS, Flight, Seat } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowRight, CreditCard, Banknote, Wallet, Terminal, CheckCircle, Loader2 } from "lucide-react";
+import { ArrowRight, CreditCard, Banknote, Wallet, Terminal, CheckCircle, Loader2, User } from "lucide-react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import {
@@ -15,10 +16,17 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "./ui/input";
 
+type PassengerData = {
+    name: string;
+    email: string;
+};
+
 type BookingData = {
     flightId: string;
-    passengers: { name: string; email: string; }[];
+    passengers: PassengerData[];
     selectedSeats: string[];
+    date: string;
+    passengersCount: number;
 };
 
 export function PaymentForm() {
@@ -55,9 +63,8 @@ export function PaymentForm() {
         )
     }
     
-    const { passengers, selectedSeats } = bookingData;
-    const totalPassengers = passengers.length;
-    const totalPrice = flight.price * totalPassengers;
+    const { passengers, selectedSeats, date, passengersCount } = bookingData;
+    const totalPrice = flight.price * passengersCount;
 
     const validateUpi = () => {
         const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
@@ -75,22 +82,32 @@ export function PaymentForm() {
         setTimeout(() => {
             const bookingId = `BK${Date.now()}`;
             
-            // Create a single booking for the first passenger for simplicity of display
-            // A real app would create multiple bookings or a group booking
-            const primaryPassenger = passengers[0];
-            const seat = flight.seats.find(s => s.id === selectedSeats[0]);
+            const bookingDate = new Date(date);
+            const departureTime = new Date(flight.departureTime);
+            departureTime.setFullYear(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
+            const arrivalTime = new Date(flight.arrivalTime);
+            arrivalTime.setFullYear(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
 
-            if (primaryPassenger && seat) {
-                 addBooking({
-                    id: bookingId,
-                    flight,
-                    passengerName: primaryPassenger.name,
-                    passengerEmail: primaryPassenger.email,
-                    seat,
-                    bookingTime: new Date(),
-                    status: 'upcoming',
-                });
-            }
+            const updatedFlight = {
+                ...flight,
+                departureTime,
+                arrivalTime,
+            };
+
+            passengers.forEach((passenger, index) => {
+                const seat = flight.seats.find(s => s.id === selectedSeats[index]);
+                if (seat) {
+                    addBooking({
+                        id: `${bookingId}-${index}`,
+                        flight: updatedFlight,
+                        passengerName: passenger.name,
+                        passengerEmail: passenger.email,
+                        seat,
+                        bookingTime: new Date(),
+                        status: 'upcoming',
+                    });
+                }
+            });
            
             setIsLoading(false);
             setPaymentSuccess(true);
@@ -100,12 +117,12 @@ export function PaymentForm() {
             }
 
             setTimeout(() => {
-                router.push(`/boarding-pass/${bookingId}`);
+                router.push(`/boarding-pass/${bookingId}-0`);
             }, 2000);
         }, 2000);
     }
 
-    const formatDate = (date: Date) => format(date, 'EEEE, MMM d');
+    const formatDate = (dateString: string) => format(new Date(dateString), 'EEEE, MMM d');
 
     return (
         <>
@@ -167,9 +184,18 @@ export function PaymentForm() {
                             <ArrowRight className="h-4 w-4 text-muted-foreground" />
                             <span>{flight.to.name}</span>
                         </div>
-                        <p className="text-muted-foreground">{formatDate(flight.departureTime)}</p>
-                        <p className="text-muted-foreground">{totalPassengers} Passenger(s)</p>
-                        <p className="text-muted-foreground">Seats: {selectedSeats.join(', ')}</p>
+                        <p className="text-muted-foreground">{formatDate(date)}</p>
+                        
+                        <div className="border-t pt-4 mt-4">
+                            <h3 className="font-semibold mb-2 flex items-center"><User className="mr-2 h-4 w-4"/>Passengers ({passengers.length})</h3>
+                            {passengers.map((p, i) => (
+                                <div key={i} className="text-muted-foreground flex justify-between">
+                                    <span>{p.name}</span>
+                                    <span className="font-mono">{selectedSeats[i]}</span>
+                                </div>
+                            ))}
+                        </div>
+
                         <div className="border-t pt-4 mt-4 flex justify-between items-center">
                             <span className="font-semibold text-lg">Total Payable</span>
                             <span className="text-2xl font-bold text-primary">₹{totalPrice.toLocaleString('en-IN')}</span>
@@ -197,3 +223,5 @@ export function PaymentForm() {
         </>
     )
 }
+
+    

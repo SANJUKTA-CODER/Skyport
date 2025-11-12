@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +21,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
-import { Plus, Trash } from "lucide-react";
 
 const passengerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -62,16 +62,11 @@ export function BookingForm({ flight }: { flight: Flight }) {
 
   useEffect(() => {
     const currentPassengers = form.getValues('passengers').length;
-    if (currentPassengers < passengerCount) {
-        for(let i = currentPassengers; i < passengerCount; i++) {
-            append({ name: "", age: "", gender: "", email: "", phone: "" });
-        }
-    } else if (currentPassengers > passengerCount) {
-        for(let i = currentPassengers; i > passengerCount; i--) {
-            remove(i-1);
-        }
+    if (currentPassengers !== passengerCount) {
+      const newPassengers = Array(passengerCount).fill({ name: "", age: "", gender: "", email: "", phone: "" });
+      form.reset({ passengers: newPassengers, selectedSeats: [] });
     }
-  }, [passengerCount, append, remove, form]);
+  }, [passengerCount, form]);
 
   const onSubmit = (data: BookingFormValues) => {
     if (data.selectedSeats.length !== data.passengers.length) {
@@ -87,6 +82,8 @@ export function BookingForm({ flight }: { flight: Flight }) {
         flightId: flight.id,
         passengers: data.passengers,
         selectedSeats: data.selectedSeats,
+        date: searchParams.get('date'),
+        passengersCount: passengerCount
     };
     
     // Using sessionStorage to pass larger data that might exceed URL length limits
@@ -109,7 +106,7 @@ export function BookingForm({ flight }: { flight: Flight }) {
         toast({
           variant: 'destructive',
           title: 'Seat limit reached',
-          description: `You can only select up to ${passengerCount} seat(s).`
+          description: `Seat limit reached for selected passengers.`
         });
         return;
       }
@@ -230,3 +227,5 @@ export function BookingForm({ flight }: { flight: Flight }) {
     </Form>
   );
 }
+
+    

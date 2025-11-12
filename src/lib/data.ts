@@ -1,3 +1,4 @@
+
 import { PlaceHolderImages } from './placeholder-images';
 
 // Types
@@ -85,10 +86,9 @@ function generateSeats(): Seat[] {
   return seats;
 }
 
-const generateRandomFlight = (id: number, from: City, to: City): Flight => {
+const generateRandomFlight = (id: number, from: City, to: City, date: string): Flight => {
   const airline = AIRLINES[Math.floor(Math.random() * AIRLINES.length)];
-  const departureTime = new Date();
-  departureTime.setDate(departureTime.getDate() + Math.floor(Math.random() * 14) + 1);
+  const departureTime = new Date(date);
   departureTime.setHours(Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
 
   const durationMinutes = Math.floor(Math.random() * 240) + 60; // 1 to 5 hours
@@ -108,9 +108,7 @@ const generateRandomFlight = (id: number, from: City, to: City): Flight => {
   };
 };
 
-export const generateFlights = (fromCode?: string, toCode?: string): Flight[] => {
-  if (!fromCode || !toCode) return [];
-  
+export const generateFlights = (fromCode: string, toCode: string, date: string): Flight[] => {
   const fromCity = CITIES.find(c => c.code === fromCode);
   const toCity = CITIES.find(c => c.code === toCode);
 
@@ -120,7 +118,7 @@ export const generateFlights = (fromCode?: string, toCode?: string): Flight[] =>
   const numberOfFlights = Math.floor(Math.random() * 5) + 3; // 3 to 7 flights
 
   for (let i = 0; i < numberOfFlights; i++) {
-    flights.push(generateRandomFlight(i, fromCity, toCity));
+    flights.push(generateRandomFlight(i, fromCity, toCity, date));
   }
 
   return flights.sort((a,b) => a.price - b.price);
@@ -130,6 +128,8 @@ export const ALL_FLIGHTS: Flight[] = CITIES.flatMap((fromCity) =>
   CITIES.filter((toCity) => toCity.code !== fromCity.code)
     .slice(0, 3) // Reduce generated flights to improve performance
     .flatMap((toCity, index) =>
-      Array.from({ length: 5 }, (_, i) => generateRandomFlight(index * 100 + i, fromCity, toCity))
+      Array.from({ length: 5 }, (_, i) => generateRandomFlight(index * 100 + i, fromCity, toCity, new Date().toISOString().split('T')[0]))
     )
 );
+
+    

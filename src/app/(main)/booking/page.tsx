@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Suspense } from 'react';
@@ -5,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { ALL_FLIGHTS, Flight } from "@/lib/data";
 import { BookingForm } from "@/components/booking-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, Clock } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, Users } from 'lucide-react';
 import { format } from 'date-fns';
 
 function BookingPageContent() {
@@ -13,18 +14,20 @@ function BookingPageContent() {
     const searchParams = useSearchParams();
     const flightId = searchParams.get('flightId');
     const flight: Flight | undefined = ALL_FLIGHTS.find(f => f.id === flightId);
+    const date = searchParams.get('date');
+    const passengersCount = searchParams.get('passengers') || '1';
 
-    if (!flight) {
+    if (!flight || !date) {
         return (
             <div className="text-center py-16">
-                <p className="text-lg text-muted-foreground">Flight not found.</p>
+                <p className="text-lg text-muted-foreground">Flight not found or booking details are incomplete.</p>
                 <button onClick={() => router.push('/')} className="mt-4">Search Again</button>
             </div>
         )
     }
 
-    const formatTime = (date: Date) => format(date, 'HH:mm');
-    const formatDate = (date: Date) => format(date, 'EEEE, MMM d');
+    const formatTime = (time: Date) => format(time, 'HH:mm');
+    const formatDate = (dateString: string) => format(new Date(dateString), 'EEEE, MMM d');
 
     return (
         <div className="container mx-auto max-w-4xl py-12 px-4">
@@ -47,7 +50,11 @@ function BookingPageContent() {
                             </div>
                             <div className="flex items-center text-muted-foreground">
                                 <Calendar className="mr-2 h-4 w-4" />
-                                <span>{formatDate(flight.departureTime)}</span>
+                                <span>{formatDate(date)}</span>
+                            </div>
+                             <div className="flex items-center text-muted-foreground">
+                                <Users className="mr-2 h-4 w-4" />
+                                <span>{passengersCount} Passenger(s)</span>
                             </div>
                             <div className="flex items-center text-muted-foreground">
                                 <Clock className="mr-2 h-4 w-4" />
@@ -55,7 +62,7 @@ function BookingPageContent() {
                             </div>
                             <div className="border-t pt-4 mt-4 flex justify-between items-center">
                                 <span className="font-semibold">Total Price</span>
-                                <span className="text-xl font-bold text-primary">₹{flight.price.toLocaleString('en-IN')}</span>
+                                <span className="text-xl font-bold text-primary">₹{(flight.price * parseInt(passengersCount)).toLocaleString('en-IN')}</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -72,3 +79,5 @@ export default function BookingPage() {
         </Suspense>
     );
 }
+
+    

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -13,8 +14,10 @@ import { Label } from "@/components/ui/label";
 import { Plane, ArrowRight, Clock, Globe } from "lucide-react";
 import { format } from 'date-fns';
 
-function FlightCard({ flight }: { flight: Flight }) {
+function FlightCard({ flight, searchParams }: { flight: Flight, searchParams: URLSearchParams }) {
   const formatTime = (date: Date) => format(date, 'HH:mm');
+
+  const bookingUrl = `/booking?flightId=${flight.id}&${searchParams.toString()}`;
   
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 hover:-translate-y-1">
@@ -53,7 +56,7 @@ function FlightCard({ flight }: { flight: Flight }) {
         <div className="col-span-6 md:col-span-1 text-right space-y-1">
           <p className="font-bold text-xl text-primary">₹{flight.price.toLocaleString('en-IN')}</p>
           <Button asChild size="sm" className="w-full bg-accent hover:bg-accent/90 btn-glow">
-            <Link href={`/booking?flightId=${flight.id}`}>Book Now</Link>
+            <Link href={bookingUrl}>Book Now</Link>
           </Button>
         </div>
       </CardContent>
@@ -89,18 +92,18 @@ export default function FlightResults() {
   const from = searchParams.get('from');
   const to = searchParams.get('to');
   const date = searchParams.get('date');
-  const passengers = searchParams.get('passengers');
+  const passengers = search_params.get('passengers');
 
   useEffect(() => {
-    if (from && to) {
+    if (from && to && date) {
       setLoading(true);
       setTimeout(() => { // Simulate network delay
-        const fetchedFlights = generateFlights(from, to);
+        const fetchedFlights = generateFlights(from, to, date);
         setFlights(fetchedFlights);
         setLoading(false);
       }, 1500);
     }
-  }, [from, to]);
+  }, [from, to, date]);
 
   useEffect(() => {
     if (flights.length > 0) {
@@ -213,7 +216,7 @@ export default function FlightResults() {
           {loading ? (
             <AnimatedLoader />
           ) : filteredFlights.length > 0 ? (
-            filteredFlights.map(flight => <FlightCard key={flight.id} flight={flight} />)
+            filteredFlights.map(flight => <FlightCard key={flight.id} flight={flight} searchParams={searchParams} />)
           ) : (
             <Card>
               <CardContent className="p-8 text-center text-muted-foreground">
@@ -227,3 +230,5 @@ export default function FlightResults() {
     </div>
   );
 }
+
+    
