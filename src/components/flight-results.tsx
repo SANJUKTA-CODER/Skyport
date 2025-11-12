@@ -92,7 +92,7 @@ export default function FlightResults() {
   const from = searchParams.get('from');
   const to = searchParams.get('to');
   const date = searchParams.get('date');
-  const passengers = search_params.get('passengers');
+  const passengers = searchParams.get('passengers');
 
   useEffect(() => {
     if (from && to && date) {
@@ -230,5 +230,3 @@ export default function FlightResults() {
     </div>
   );
 }
-
-    
