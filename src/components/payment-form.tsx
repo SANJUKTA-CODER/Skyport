@@ -1,38 +1,48 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useBooking } from "@/context/booking-context";
-import { ALL_FLIGHTS, Flight } from "@/lib/data";
+import { ALL_FLIGHTS, Flight, Seat } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowRight, CreditCard, Banknote, Wallet, Terminal, CheckCircle, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogContent,
 } from "@/components/ui/alert-dialog"
 import { Input } from "./ui/input";
 
+type BookingData = {
+    flightId: string;
+    passengers: { name: string; email: string; }[];
+    selectedSeats: string[];
+};
+
 export function PaymentForm() {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const { addBooking } = useBooking();
+    const [bookingData, setBookingData] = useState<BookingData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [paymentSuccess, setPaymentSuccess] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('card');
     const [upiId, setUpiId] = useState('');
     const [isUpiValid, setIsUpiValid] = useState(true);
 
-    const flightId = searchParams.get('flightId');
-    const passengerName = searchParams.get('passengerName');
-    const passengerEmail = searchParams.get('passengerEmail');
-    const selectedSeatId = searchParams.get('selectedSeat');
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const data = sessionStorage.getItem('skyport-booking-data');
+            if (data) {
+                setBookingData(JSON.parse(data));
+            }
+        }
+    }, []);
 
-    const flight: Flight | undefined = ALL_FLIGHTS.find(f => f.id === flightId);
+    const flight: Flight | undefined = ALL_FLIGHTS.find(f => f.id === bookingData?.flightId);
 
-    if (!flight || !passengerName || !passengerEmail || !selectedSeatId) {
+    if (!bookingData || !flight) {
         return (
              <Alert variant="destructive">
                 <Terminal className="h-4 w-4" />
@@ -44,20 +54,10 @@ export function PaymentForm() {
             </Alert>
         )
     }
-
-    const seat = flight.seats.find(s => s.id === selectedSeatId);
-    if (!seat) {
-         return (
-             <Alert variant="destructive">
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Seat not available</AlertTitle>
-                <AlertDescription>
-                   The selected seat is no longer available.
-                   <Button variant="link" onClick={() => router.back()}>Go Back</Button>
-                </AlertDescription>
-            </Alert>
-        )
-    }
+    
+    const { passengers, selectedSeats } = bookingData;
+    const totalPassengers = passengers.length;
+    const totalPrice = flight.price * totalPassengers;
 
     const validateUpi = () => {
         const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
@@ -74,17 +74,30 @@ export function PaymentForm() {
         setIsLoading(true);
         setTimeout(() => {
             const bookingId = `BK${Date.now()}`;
-            addBooking({
-                id: bookingId,
-                flight,
-                passengerName,
-                passengerEmail,
-                seat,
-                bookingTime: new Date(),
-                status: 'upcoming',
-            });
+            
+            // Create a single booking for the first passenger for simplicity of display
+            // A real app would create multiple bookings or a group booking
+            const primaryPassenger = passengers[0];
+            const seat = flight.seats.find(s => s.id === selectedSeats[0]);
+
+            if (primaryPassenger && seat) {
+                 addBooking({
+                    id: bookingId,
+                    flight,
+                    passengerName: primaryPassenger.name,
+                    passengerEmail: primaryPassenger.email,
+                    seat,
+                    bookingTime: new Date(),
+                    status: 'upcoming',
+                });
+            }
+           
             setIsLoading(false);
             setPaymentSuccess(true);
+            
+            if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('skyport-booking-data');
+            }
 
             setTimeout(() => {
                 router.push(`/boarding-pass/${bookingId}`);
@@ -92,7 +105,6 @@ export function PaymentForm() {
         }, 2000);
     }
 
-    const formatTime = (date: Date) => format(date, 'HH:mm');
     const formatDate = (date: Date) => format(date, 'EEEE, MMM d');
 
     return (
@@ -155,12 +167,12 @@ export function PaymentForm() {
                             <ArrowRight className="h-4 w-4 text-muted-foreground" />
                             <span>{flight.to.name}</span>
                         </div>
-                        <p className="text-muted-foreground">{formatDate(flight.departureTime)} at {formatTime(flight.departureTime)}</p>
-                        <p className="text-muted-foreground">{passengerName}</p>
-                        <p className="text-muted-foreground">Seat {seat.number}</p>
+                        <p className="text-muted-foreground">{formatDate(flight.departureTime)}</p>
+                        <p className="text-muted-foreground">{totalPassengers} Passenger(s)</p>
+                        <p className="text-muted-foreground">Seats: {selectedSeats.join(', ')}</p>
                         <div className="border-t pt-4 mt-4 flex justify-between items-center">
                             <span className="font-semibold text-lg">Total Payable</span>
-                            <span className="text-2xl font-bold text-primary">₹{flight.price.toLocaleString('en-IN')}</span>
+                            <span className="text-2xl font-bold text-primary">₹{totalPrice.toLocaleString('en-IN')}</span>
                         </div>
                     </CardContent>
                 </Card>
@@ -169,7 +181,7 @@ export function PaymentForm() {
         <div className="mt-8 text-center">
             <Button onClick={handlePayment} disabled={isLoading || paymentMethod === 'netbanking'} size="lg" className="w-full md:w-1/2 bg-accent hover:bg-accent/90 btn-glow">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? 'Processing...' : `Pay ₹${flight.price.toLocaleString('en-IN')} Securely`}
+                {isLoading ? 'Processing...' : `Pay ₹${totalPrice.toLocaleString('en-IN')} Securely`}
             </Button>
         </div>
 

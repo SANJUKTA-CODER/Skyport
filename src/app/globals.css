@@ -83,6 +83,10 @@
     box-shadow: 0 0 10px hsl(var(--accent)), 0 0 20px hsl(var(--accent)),
       0 0 30px hsl(var(--accent));
   }
+  
+  .animate-soft-pulse {
+    animation: soft-pulse 2s infinite ease-in-out;
+  }
 
   .text-glow {
     text-shadow: 0 0 8px hsl(var(--primary-foreground) / 0.8);
@@ -97,6 +101,21 @@
     }
     100% {
       background-position: 0% 50%;
+    }
+  }
+
+  @keyframes soft-pulse {
+    0% {
+      opacity: 1;
+      box-shadow: 0 0 5px hsl(var(--accent) / 0.7);
+    }
+    50% {
+      opacity: 0.9;
+      box-shadow: 0 0 15px hsl(var(--accent) / 0.9);
+    }
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 5px hsl(var(--accent) / 0.7);
     }
   }
 
@@ -115,22 +134,13 @@
     animation: fade-in 0.8s ease-out forwards;
   }
 
-  @keyframes plane-takeoff {
-    0% {
-      transform: translateX(-100vw) translateY(30vh) rotate(-15deg);
-      opacity: 0;
-    }
-    20% {
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(100vw) translateY(-50vh) rotate(15deg);
-      opacity: 1;
-    }
+  .fade-in-delay-1 {
+    animation: fade-in 0.8s ease-out 0.4s forwards;
+    opacity: 0;
   }
-
-  .animate-plane-takeoff {
-    animation: plane-takeoff 5s ease-in-out forwards;
+  .fade-in-delay-2 {
+      animation: fade-in 0.8s ease-out 0.8s forwards;
+      opacity: 0;
   }
 
   .loader-plane-circle {

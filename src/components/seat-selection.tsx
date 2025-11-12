@@ -14,12 +14,14 @@ import {
 
 export function SeatSelection({
   seats,
-  selectedSeat,
+  selectedSeats,
   onSelectSeat,
+  passengerCount,
 }: {
   seats: Seat[];
-  selectedSeat: string | null;
+  selectedSeats: string[];
   onSelectSeat: (seatId: string) => void;
+  passengerCount: number;
 }) {
   const seatRows: Seat[][] = [];
   for (let i = 0; i < seats.length; i += 6) {
@@ -41,14 +43,14 @@ export function SeatSelection({
                     <TooltipTrigger asChild>
                         <button
                             type="button"
-                            disabled={!seat.isAvailable}
+                            disabled={!seat.isAvailable && !selectedSeats.includes(seat.id)}
                             onClick={() => onSelectSeat(seat.id)}
                             className={cn(
                                 "p-1 rounded-md transition-colors",
                                 {
-                                "text-muted-foreground/50 cursor-not-allowed": !seat.isAvailable,
-                                "text-primary hover:bg-primary/10": seat.isAvailable,
-                                "bg-primary text-primary-foreground hover:bg-primary/90": selectedSeat === seat.id,
+                                "text-red-500/50 cursor-not-allowed": !seat.isAvailable,
+                                "text-blue-500 hover:bg-blue-500/10": seat.isAvailable,
+                                "bg-green-500 text-white hover:bg-green-500/90": selectedSeats.includes(seat.id),
                                 }
                             )}
                             >
@@ -56,7 +58,7 @@ export function SeatSelection({
                         </button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Seat {seat.number} - {seat.isAvailable ? 'Available' : 'Occupied'}</p>
+                        <p>Seat {seat.number} - {!seat.isAvailable && !selectedSeats.includes(seat.id) ? 'Booked' : 'Available'}</p>
                     </TooltipContent>
                 </Tooltip>
                 {seatIndex === 2 && <div className="w-6" />}
@@ -66,9 +68,9 @@ export function SeatSelection({
         ))}
       </div>
        <div className="flex gap-4 mt-6 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2"><Armchair className="w-5 h-5 text-primary" /> Available</div>
-        <div className="flex items-center gap-2"><Armchair className="w-5 h-5 bg-primary text-primary-foreground rounded-sm" /> Selected</div>
-        <div className="flex items-center gap-2"><Armchair className="w-5 h-5 text-muted-foreground/50" /> Occupied</div>
+        <div className="flex items-center gap-2"><Armchair className="w-5 h-5 text-blue-500" /> Available</div>
+        <div className="flex items-center gap-2"><Armchair className="w-5 h-5 bg-green-500 text-white rounded-sm p-0.5" /> Selected</div>
+        <div className="flex items-center gap-2"><Armchair className="w-5 h-5 text-red-500/50" /> Booked</div>
        </div>
     </div>
     </TooltipProvider>

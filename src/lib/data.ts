@@ -123,13 +123,13 @@ export const generateFlights = (fromCode?: string, toCode?: string): Flight[] =>
     flights.push(generateRandomFlight(i, fromCity, toCity));
   }
 
-  return flights;
+  return flights.sort((a,b) => a.price - b.price);
 };
 
 export const ALL_FLIGHTS: Flight[] = CITIES.flatMap((fromCity) =>
   CITIES.filter((toCity) => toCity.code !== fromCity.code)
-    .slice(0, 2)
+    .slice(0, 3) // Reduce generated flights to improve performance
     .flatMap((toCity, index) =>
-      Array.from({ length: 2 }, (_, i) => generateRandomFlight(index * 100 + i, fromCity, toCity))
+      Array.from({ length: 5 }, (_, i) => generateRandomFlight(index * 100 + i, fromCity, toCity))
     )
 );

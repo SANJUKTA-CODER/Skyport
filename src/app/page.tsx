@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plane, ArrowRight } from "lucide-react";
+import { Plane, ArrowRight, CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
     Dialog,
@@ -24,62 +24,72 @@ export default function WelcomePage() {
     }, []);
 
     if (!isMounted) {
-        return null;
+        return null; // Or a loading skeleton
     }
 
     return (
-        <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden p-4 text-center">
             <div className="absolute inset-0 gradient-sky" />
-            <div className="absolute inset-0 bg-black/20" />
-            
-            <Plane className="absolute text-white/50 w-64 h-64 animate-plane-takeoff" style={{ animationDuration: '6s' }} />
+            <div className="absolute inset-0 bg-black/10" />
 
-            <div className="relative z-10 text-center text-primary-foreground px-4">
-                <div className="fade-in" style={{ animationDuration: '1.2s' }}>
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-glow font-headline uppercase">
+            <div className="relative z-10 text-primary-foreground max-w-4xl mx-auto">
+                <div className="fade-in">
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tight text-glow font-headline uppercase">
                         SKYPORT
                     </h1>
-                    <p className="text-xl md:text-2xl mt-4 mb-10 opacity-90 font-light" style={{ animationDelay: '0.3s', animationName: 'fade-in', animationFillMode: 'backwards' }}>
+                    <p className="text-xl md:text-2xl mt-2 mb-6 opacity-95 font-light">
                         Your Gateway to the Skies
+                    </p>
+                    <p className="text-base md:text-lg max-w-2xl mx-auto mb-6">
+                        Book your air travel with speed, simplicity, and smarter search.
                     </p>
                 </div>
                 
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button
-                            size="lg"
-                            className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg py-7 px-10 rounded-full transition-all duration-300 hover:scale-105 btn-glow animate-pulse"
-                            style={{ animationDelay: '0.8s', animationName: 'fade-in', animationFillMode: 'backwards' }}
-                        >
-                            Get Started
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] text-left">
-                        <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold text-primary">Welcome to SkyPort</DialogTitle>
-                            <DialogDescription>
-                                New to SkyPort? Create an account to continue.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="py-4 flex flex-col gap-4">
-                           <Button size="lg" onClick={() => router.push('/signup')}>Create Account <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                           <p className="text-center text-sm text-muted-foreground">
-                                Already have an account?{' '}
-                                <Link href="/login" className="underline text-primary font-medium" onClick={() => setIsDialogOpen(false)}>
-                                    Login here
-                                </Link>
-                           </p>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-            </div>
-            
-            <div className="absolute bottom-6 z-10 fade-in" style={{ animationDelay: '1.2s' }}>
-                <Link href="/login" passHref>
-                    <Button variant="link" className="text-primary-foreground/80 hover:text-primary-foreground">
-                        Skip Intro
-                    </Button>
-                </Link>
+                <div className="fade-in-delay-1 bg-black/20 backdrop-blur-sm rounded-xl p-6 md:p-8 space-y-6">
+                    <p className="text-base md:text-lg">
+                        SkyPort brings Indian travellers the fastest way to compare airlines, pick seats visually, and pay securely – all in one elegant interface built for comfort and clarity.
+                    </p>
+                    <div>
+                        <h2 className="text-2xl font-bold mb-4">Why SkyPort?</h2>
+                        <ul className="space-y-3 text-left inline-block">
+                            <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-accent" /> Instant flight comparisons</li>
+                            <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-accent" /> Visual seat selection</li>
+                            <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-accent" /> Unified Indian-rupee checkout</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="mt-10 fade-in-delay-2">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                size="lg"
+                                className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg py-7 px-10 rounded-full transition-all duration-300 hover:scale-105 animate-soft-pulse"
+                            >
+                                Get Started
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] text-left">
+                            <DialogHeader>
+                                <DialogTitle className="text-2xl font-bold text-primary">Welcome to SkyPort</DialogTitle>
+                                <DialogDescription>
+                                   New to SkyPort? Create an account or login to continue.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="py-4 flex flex-col gap-4">
+                               <Button size="lg" onClick={() => router.push('/signup')}>Create Account <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                               <Button size="lg" variant="outline" onClick={() => router.push('/login')}>Login</Button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                    <div className="mt-4">
+                        <Link href="/login" passHref>
+                            <Button variant="link" className="text-primary-foreground/80 hover:text-primary-foreground">
+                                Skip Intro
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     );
