@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -79,11 +80,10 @@ export function BookingForm({ flight }: { flight: Flight }) {
     }
 
     const bookingData = {
-        flightId: flight.id,
+        flight,
         passengers: data.passengers,
         selectedSeats: data.selectedSeats,
         date: searchParams.get('date'),
-        passengersCount: passengerCount
     };
     
     // Using sessionStorage to pass larger data that might exceed URL length limits
@@ -227,5 +227,3 @@ export function BookingForm({ flight }: { flight: Flight }) {
     </Form>
   );
 }
-
-    

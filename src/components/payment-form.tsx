@@ -1,9 +1,10 @@
 
+
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useBooking } from "@/context/booking-context";
-import { ALL_FLIGHTS, Flight, Seat } from "@/lib/data";
+import { Flight, Seat } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -22,11 +23,10 @@ type PassengerData = {
 };
 
 type BookingData = {
-    flightId: string;
+    flight: Flight;
     passengers: PassengerData[];
     selectedSeats: string[];
     date: string;
-    passengersCount: number;
 };
 
 export function PaymentForm() {
@@ -43,14 +43,16 @@ export function PaymentForm() {
         if (typeof window !== 'undefined') {
             const data = sessionStorage.getItem('skyport-booking-data');
             if (data) {
-                setBookingData(JSON.parse(data));
+                const parsedData = JSON.parse(data);
+                // Dates will be stringified, so we need to convert them back to Date objects
+                parsedData.flight.departureTime = new Date(parsedData.flight.departureTime);
+                parsedData.flight.arrivalTime = new Date(parsedData.flight.arrivalTime);
+                setBookingData(parsedData);
             }
         }
     }, []);
 
-    const flight: Flight | undefined = ALL_FLIGHTS.find(f => f.id === bookingData?.flightId);
-
-    if (!bookingData || !flight) {
+    if (!bookingData) {
         return (
              <Alert variant="destructive">
                 <Terminal className="h-4 w-4" />
@@ -63,8 +65,8 @@ export function PaymentForm() {
         )
     }
     
-    const { passengers, selectedSeats, date, passengersCount } = bookingData;
-    const totalPrice = flight.price * passengersCount;
+    const { flight, passengers, selectedSeats, date } = bookingData;
+    const totalPrice = flight.price * passengers.length;
 
     const validateUpi = () => {
         const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
@@ -82,31 +84,15 @@ export function PaymentForm() {
         setTimeout(() => {
             const bookingId = `BK${Date.now()}`;
             
-            const bookingDate = new Date(date);
-            const departureTime = new Date(flight.departureTime);
-            departureTime.setFullYear(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
-            const arrivalTime = new Date(flight.arrivalTime);
-            arrivalTime.setFullYear(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
-
-            const updatedFlight = {
-                ...flight,
-                departureTime,
-                arrivalTime,
-            };
-
+            // This logic is now handled in the context to ensure data consistency
             passengers.forEach((passenger, index) => {
-                const seat = flight.seats.find(s => s.id === selectedSeats[index]);
-                if (seat) {
-                    addBooking({
-                        id: `${bookingId}-${index}`,
-                        flight: updatedFlight,
-                        passengerName: passenger.name,
-                        passengerEmail: passenger.email,
-                        seat,
-                        bookingTime: new Date(),
-                        status: 'upcoming',
-                    });
-                }
+                addBooking({
+                    flight,
+                    passenger,
+                    seatNumber: selectedSeats[index],
+                    bookingId: `${bookingId}-${index}`,
+                    status: 'upcoming'
+                });
             });
            
             setIsLoading(false);
@@ -223,5 +209,3 @@ export function PaymentForm() {
         </>
     )
 }
-
-    

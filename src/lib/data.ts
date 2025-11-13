@@ -1,4 +1,5 @@
 
+
 import { PlaceHolderImages } from './placeholder-images';
 
 // Types
@@ -11,6 +12,14 @@ export type Airline = {
   name: string;
   code: string;
   logoUrl: string;
+};
+
+export type Passenger = {
+  name: string;
+  age: number;
+  gender: string;
+  email: string;
+  phone: string;
 };
 
 export type Flight = {
@@ -131,5 +140,3 @@ export const ALL_FLIGHTS: Flight[] = CITIES.flatMap((fromCity) =>
       Array.from({ length: 5 }, (_, i) => generateRandomFlight(index * 100 + i, fromCity, toCity, new Date().toISOString().split('T')[0]))
     )
 );
-
-    
