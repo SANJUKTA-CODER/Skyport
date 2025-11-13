@@ -3,11 +3,13 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { Booking, BookingStatus, Flight, Seat, Passenger } from '@/lib/data';
+import { ALL_FLIGHTS } from '@/lib/data';
 
 interface BookingContextType {
   bookings: Booking[];
   addBooking: (bookingDetails: { flight: Flight; passenger: Passenger; seatNumber: string; bookingId: string; status: BookingStatus; }) => void;
   updateBookingStatus: (bookingId: string, status: BookingStatus) => void;
+  getFlightById: (flightId: string) => Flight | undefined;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -69,8 +71,13 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const getFlightById = (flightId: string): Flight | undefined => {
+    // In a real app, this would fetch from an API. Here, we find it in our mock data.
+    return ALL_FLIGHTS.find(f => f.id === flightId);
+  }
+
   return (
-    <BookingContext.Provider value={{ bookings, addBooking, updateBookingStatus }}>
+    <BookingContext.Provider value={{ bookings, addBooking, updateBookingStatus, getFlightById }}>
       {children}
     </BookingContext.Provider>
   );

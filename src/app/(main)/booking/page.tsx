@@ -8,12 +8,16 @@ import { BookingForm } from "@/components/booking-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Calendar, Clock, Users } from 'lucide-react';
 import { format } from 'date-fns';
+import { useBooking } from '@/context/booking-context';
 
 function BookingPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const flightId = searchParams.get('flightId');
-    const flight: Flight | undefined = ALL_FLIGHTS.find(f => f.id === flightId);
+    const { getFlightById } = useBooking();
+    
+    const flight: Flight | undefined = getFlightById(flightId || '');
+
     const date = searchParams.get('date');
     const passengersCount = searchParams.get('passengers') || '1';
 
@@ -79,5 +83,3 @@ export default function BookingPage() {
         </Suspense>
     );
 }
-
-    
