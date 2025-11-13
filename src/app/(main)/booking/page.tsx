@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowRight, Calendar, Clock, Users, Plane as PlaneIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { useBooking } from '@/context/booking-context';
+import { Button } from '@/components/ui/button';
 
 type SelectedFlight = {
     flightId: string;
@@ -34,29 +35,24 @@ function BookingPageContent() {
         const storedFlight = localStorage.getItem('currentFlight');
         if (storedFlight) {
             const parsedFlight = JSON.parse(storedFlight);
-            if (parsedFlight.flightId === flightId) {
-                setSelectedFlight(parsedFlight);
-                const flightData = getFlightById(flightId || '');
-                if (flightData) {
-                    flightData.departureTime = new Date(parsedFlight.departureTime);
-                    flightData.arrivalTime = new Date(parsedFlight.arrivalTime);
-                    setFlight(flightData);
-                }
+            setSelectedFlight(parsedFlight);
+
+            const flightData = getFlightById(parsedFlight.flightId);
+            if (flightData) {
+                // Ensure date objects are correctly hydrated for the BookingForm component
+                flightData.departureTime = new Date(parsedFlight.departureTime);
+                flightData.arrivalTime = new Date(parsedFlight.arrivalTime);
+                setFlight(flightData);
             }
         }
-        if (!flight) {
-            const flightData = getFlightById(flightId || '');
-            setFlight(flightData);
-        }
-
-    }, [flightId, getFlightById, flight]);
+    }, [flightId, getFlightById]);
 
 
     if (!flight || !selectedFlight) {
         return (
             <div className="container mx-auto text-center py-16">
-                <p className="text-lg text-muted-foreground">No flight selected or booking details are incomplete.</p>
-                <button onClick={() => router.push('/home')} className="mt-4">Search Again</button>
+                <p className="text-lg text-muted-foreground">No flight selected.</p>
+                <Button onClick={() => router.push('/home')}>Search Again</Button>
             </div>
         )
     }

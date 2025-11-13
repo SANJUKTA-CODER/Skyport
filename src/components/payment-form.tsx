@@ -48,28 +48,6 @@ export function PaymentForm() {
                 parsedData.flight.departureTime = new Date(parsedData.flight.departureTime);
                 parsedData.flight.arrivalTime = new Date(parsedData.flight.arrivalTime);
                 setBookingData(parsedData);
-            } else {
-                 const currentFlightData = localStorage.getItem('currentFlight');
-                 if(currentFlightData){
-                     const parsedFlightData = JSON.parse(currentFlightData);
-                     const sessionData = {
-                         flight: {
-                             ...parsedFlightData,
-                             price: parsedFlightData.fare,
-                             departureTime: new Date(parsedFlightData.departureTime),
-                             arrivalTime: new Date(parsedFlightData.arrivalTime),
-                             from: { name: parsedFlightData.fromCity, code: parsedFlightData.fromCode },
-                             to: { name: parsedFlightData.toCity, code: parsedFlightData.toCode },
-                             airline: { name: parsedFlightData.airline, logoUrl: parsedFlightData.airlineLogoUrl },
-                             id: parsedFlightData.flightId
-                         },
-                         passengers: [], // This will be filled later, but payment page needs the structure
-                         selectedSeats: [],
-                         date: parsedFlightData.journeyDate,
-                     }
-                     sessionStorage.setItem('skyport-booking-data', JSON.stringify(sessionData));
-                     setBookingData(sessionData);
-                 }
             }
         }
     }, []);
@@ -88,7 +66,7 @@ export function PaymentForm() {
     }
     
     const { flight, passengers, selectedSeats, date } = bookingData;
-    const totalPrice = flight.price * passengers.length;
+    const totalPrice = flight.price * (passengers.length || 1);
 
     const validateUpi = () => {
         const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
@@ -106,22 +84,32 @@ export function PaymentForm() {
         setTimeout(() => {
             const bookingId = `BK${Date.now()}`;
             
-            passengers.forEach((passenger, index) => {
-                addBooking({
-                    flight,
-                    passenger,
-                    seatNumber: selectedSeats[index],
-                    bookingId: `${bookingId}-${index}`,
-                    status: 'upcoming'
-                });
-            });
+            if (passengers.length > 0) {
+              passengers.forEach((passenger, index) => {
+                  addBooking({
+                      flight,
+                      passenger,
+                      seatNumber: selectedSeats[index],
+                      bookingId: `${bookingId}-${index}`,
+                      status: 'upcoming'
+                  });
+              });
+            } else {
+              // Handle case for single passenger if form is skipped
+              addBooking({
+                flight,
+                passenger: { name: 'Guest Passenger', email: 'guest@skyport.com', age: 0, gender: '', phone: '' },
+                seatNumber: selectedSeats[0] || '1A',
+                bookingId: `${bookingId}-0`,
+                status: 'upcoming'
+              });
+            }
            
             setIsLoading(false);
             setPaymentSuccess(true);
             
             if (typeof window !== 'undefined') {
                 sessionStorage.removeItem('skyport-booking-data');
-                // Don't remove currentFlight, it might be needed for boarding pass
             }
 
             setTimeout(() => {
@@ -185,6 +173,7 @@ export function PaymentForm() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Booking Summary</CardTitle>
+                        <CardDescription>{flight.airline.name}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4 text-sm">
                         <div className="flex items-center justify-between font-semibold">
@@ -195,13 +184,18 @@ export function PaymentForm() {
                         <p className="text-muted-foreground">{formatDate(date)}</p>
                         
                         <div className="border-t pt-4 mt-4">
-                            <h3 className="font-semibold mb-2 flex items-center"><User className="mr-2 h-4 w-4"/>Passengers ({passengers.length})</h3>
-                            {passengers.map((p, i) => (
+                            <h3 className="font-semibold mb-2 flex items-center"><User className="mr-2 h-4 w-4"/>Passengers ({passengers.length || 1})</h3>
+                            {passengers.length > 0 ? passengers.map((p, i) => (
                                 <div key={i} className="text-muted-foreground flex justify-between">
                                     <span>{p.name}</span>
                                     <span className="font-mono">{selectedSeats[i]}</span>
                                 </div>
-                            ))}
+                            )) : (
+                                <div className="text-muted-foreground flex justify-between">
+                                    <span>Passenger 1</span>
+                                    <span className="font-mono">{selectedSeats[0]}</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="border-t pt-4 mt-4 flex justify-between items-center">
@@ -213,7 +207,7 @@ export function PaymentForm() {
             </div>
         </div>
         <div className="mt-8 text-center">
-            <Button onClick={handlePayment} disabled={isLoading || paymentMethod === 'netbanking' || passengers.length === 0} size="lg" className="w-full md:w-1/2 bg-accent hover:bg-accent/90 btn-glow">
+            <Button onClick={handlePayment} disabled={isLoading || paymentMethod === 'netbanking'} size="lg" className="w-full md:w-1/2 bg-accent hover:bg-accent/90 btn-glow">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? 'Processing...' : `Pay ₹${totalPrice.toLocaleString('en-IN')} Securely`}
             </Button>
