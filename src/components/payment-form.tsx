@@ -48,6 +48,28 @@ export function PaymentForm() {
                 parsedData.flight.departureTime = new Date(parsedData.flight.departureTime);
                 parsedData.flight.arrivalTime = new Date(parsedData.flight.arrivalTime);
                 setBookingData(parsedData);
+            } else {
+                 const currentFlightData = localStorage.getItem('currentFlight');
+                 if(currentFlightData){
+                     const parsedFlightData = JSON.parse(currentFlightData);
+                     const sessionData = {
+                         flight: {
+                             ...parsedFlightData,
+                             price: parsedFlightData.fare,
+                             departureTime: new Date(parsedFlightData.departureTime),
+                             arrivalTime: new Date(parsedFlightData.arrivalTime),
+                             from: { name: parsedFlightData.fromCity, code: parsedFlightData.fromCode },
+                             to: { name: parsedFlightData.toCity, code: parsedFlightData.toCode },
+                             airline: { name: parsedFlightData.airline, logoUrl: parsedFlightData.airlineLogoUrl },
+                             id: parsedFlightData.flightId
+                         },
+                         passengers: [], // This will be filled later, but payment page needs the structure
+                         selectedSeats: [],
+                         date: parsedFlightData.journeyDate,
+                     }
+                     sessionStorage.setItem('skyport-booking-data', JSON.stringify(sessionData));
+                     setBookingData(sessionData);
+                 }
             }
         }
     }, []);
@@ -58,7 +80,7 @@ export function PaymentForm() {
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                   There was a problem loading your booking details. Please try again.
+                   No flight selected. Please try again.
                    <Button variant="link" onClick={() => router.push('/home')}>Start Over</Button>
                 </AlertDescription>
             </Alert>
@@ -84,7 +106,6 @@ export function PaymentForm() {
         setTimeout(() => {
             const bookingId = `BK${Date.now()}`;
             
-            // This logic is now handled in the context to ensure data consistency
             passengers.forEach((passenger, index) => {
                 addBooking({
                     flight,
@@ -100,6 +121,7 @@ export function PaymentForm() {
             
             if (typeof window !== 'undefined') {
                 sessionStorage.removeItem('skyport-booking-data');
+                // Don't remove currentFlight, it might be needed for boarding pass
             }
 
             setTimeout(() => {
@@ -191,7 +213,7 @@ export function PaymentForm() {
             </div>
         </div>
         <div className="mt-8 text-center">
-            <Button onClick={handlePayment} disabled={isLoading || paymentMethod === 'netbanking'} size="lg" className="w-full md:w-1/2 bg-accent hover:bg-accent/90 btn-glow">
+            <Button onClick={handlePayment} disabled={isLoading || paymentMethod === 'netbanking' || passengers.length === 0} size="lg" className="w-full md:w-1/2 bg-accent hover:bg-accent/90 btn-glow">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? 'Processing...' : `Pay ₹${totalPrice.toLocaleString('en-IN')} Securely`}
             </Button>

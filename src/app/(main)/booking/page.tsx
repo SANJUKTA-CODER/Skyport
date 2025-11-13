@@ -1,36 +1,67 @@
 
 "use client";
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from "next/navigation";
-import { ALL_FLIGHTS, Flight } from "@/lib/data";
+import { Flight } from "@/lib/data";
 import { BookingForm } from "@/components/booking-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, Clock, Users } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, Users, Plane as PlaneIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { useBooking } from '@/context/booking-context';
+
+type SelectedFlight = {
+    flightId: string;
+    fromCity: string;
+    toCity: string;
+    journeyDate: string;
+    airline: string;
+    passengers: string;
+    fare: number;
+    departureTime: string;
+    arrivalTime: string;
+};
 
 function BookingPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const flightId = searchParams.get('flightId');
     const { getFlightById } = useBooking();
+    const [selectedFlight, setSelectedFlight] = useState<SelectedFlight | null>(null);
+    const [flight, setFlight] = useState<Flight | undefined>(undefined);
     
-    const flight: Flight | undefined = getFlightById(flightId || '');
+    useEffect(() => {
+        const storedFlight = localStorage.getItem('currentFlight');
+        if (storedFlight) {
+            const parsedFlight = JSON.parse(storedFlight);
+            if (parsedFlight.flightId === flightId) {
+                setSelectedFlight(parsedFlight);
+                const flightData = getFlightById(flightId || '');
+                if (flightData) {
+                    flightData.departureTime = new Date(parsedFlight.departureTime);
+                    flightData.arrivalTime = new Date(parsedFlight.arrivalTime);
+                    setFlight(flightData);
+                }
+            }
+        }
+        if (!flight) {
+            const flightData = getFlightById(flightId || '');
+            setFlight(flightData);
+        }
 
-    const date = searchParams.get('date');
-    const passengersCount = searchParams.get('passengers') || '1';
+    }, [flightId, getFlightById, flight]);
 
-    if (!flight || !date) {
+
+    if (!flight || !selectedFlight) {
         return (
-            <div className="text-center py-16">
-                <p className="text-lg text-muted-foreground">Flight not found or booking details are incomplete.</p>
-                <button onClick={() => router.push('/')} className="mt-4">Search Again</button>
+            <div className="container mx-auto text-center py-16">
+                <p className="text-lg text-muted-foreground">No flight selected or booking details are incomplete.</p>
+                <button onClick={() => router.push('/home')} className="mt-4">Search Again</button>
             </div>
         )
     }
 
-    const formatTime = (time: Date) => format(time, 'HH:mm');
+    const formatTime = (time: string) => format(new Date(time), 'HH:mm');
     const formatDate = (dateString: string) => format(new Date(dateString), 'EEEE, MMM d');
 
     return (
@@ -44,29 +75,29 @@ function BookingPageContent() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Flight Summary</CardTitle>
-                            <CardDescription>{flight.airline.name}</CardDescription>
+                            <CardDescription>{selectedFlight.airline}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4 text-sm">
                             <div className="flex items-center justify-between">
-                                <span className="font-semibold">{flight.from.name}</span>
+                                <span className="font-semibold">{selectedFlight.fromCity}</span>
                                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-semibold">{flight.to.name}</span>
+                                <span className="font-semibold">{selectedFlight.toCity}</span>
                             </div>
                             <div className="flex items-center text-muted-foreground">
                                 <Calendar className="mr-2 h-4 w-4" />
-                                <span>{formatDate(date)}</span>
+                                <span>{formatDate(selectedFlight.journeyDate)}</span>
                             </div>
                              <div className="flex items-center text-muted-foreground">
                                 <Users className="mr-2 h-4 w-4" />
-                                <span>{passengersCount} Passenger(s)</span>
+                                <span>{selectedFlight.passengers} Passenger(s)</span>
                             </div>
                             <div className="flex items-center text-muted-foreground">
                                 <Clock className="mr-2 h-4 w-4" />
-                                <span>{formatTime(flight.departureTime)} - {formatTime(flight.arrivalTime)}</span>
+                                <span>{formatTime(selectedFlight.departureTime)} - {formatTime(selectedFlight.arrivalTime)}</span>
                             </div>
                             <div className="border-t pt-4 mt-4 flex justify-between items-center">
                                 <span className="font-semibold">Total Price</span>
-                                <span className="text-xl font-bold text-primary">₹{(flight.price * parseInt(passengersCount)).toLocaleString('en-IN')}</span>
+                                <span className="text-xl font-bold text-primary">₹{(selectedFlight.fare * parseInt(selectedFlight.passengers)).toLocaleString('en-IN')}</span>
                             </div>
                         </CardContent>
                     </Card>

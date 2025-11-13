@@ -16,9 +16,37 @@ import { Plane, ArrowRight, Clock, Globe } from "lucide-react";
 import { format } from 'date-fns';
 
 function FlightCard({ flight, searchParams }: { flight: Flight, searchParams: URLSearchParams }) {
+  const router = useRouter();
   const formatTime = (date: Date) => format(date, 'HH:mm');
 
-  const bookingUrl = `/booking?flightId=${flight.id}&${searchParams.toString()}`;
+  const handleBookNow = () => {
+    const passengersCount = searchParams.get('passengers') || '1';
+    const journeyDate = searchParams.get('date');
+    const travelClass = searchParams.get('class') || 'Economy';
+
+    const selectedFlight = {
+      flightId: flight.id,
+      fromCity: flight.from.name,
+      toCity: flight.to.name,
+      journeyDate: journeyDate,
+      airline: flight.airline.name,
+      passengers: passengersCount,
+      fare: flight.price,
+      departureTime: flight.departureTime,
+      arrivalTime: flight.arrivalTime,
+      durationMinutes: flight.durationMinutes,
+      airlineLogoUrl: flight.airline.logoUrl,
+      fromCode: flight.from.code,
+      toCode: flight.to.code,
+      flightNumber: flight.id,
+      classType: travelClass,
+    };
+    
+    localStorage.setItem('currentFlight', JSON.stringify(selectedFlight));
+    
+    const bookingUrl = `/booking?flightId=${flight.id}&${searchParams.toString()}`;
+    router.push(bookingUrl);
+  };
   
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 hover:-translate-y-1">
@@ -56,8 +84,8 @@ function FlightCard({ flight, searchParams }: { flight: Flight, searchParams: UR
 
         <div className="col-span-6 md:col-span-1 text-right space-y-1">
           <p className="font-bold text-xl text-primary">₹{flight.price.toLocaleString('en-IN')}</p>
-          <Button asChild size="sm" className="w-full bg-accent hover:bg-accent/90 btn-glow">
-            <Link href={bookingUrl}>Book Now</Link>
+          <Button onClick={handleBookNow} size="sm" className="w-full bg-accent hover:bg-accent/90 btn-glow">
+            Book Now
           </Button>
         </div>
       </CardContent>
