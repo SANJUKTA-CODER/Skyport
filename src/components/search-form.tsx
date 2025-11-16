@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -145,196 +146,193 @@ export function SearchForm() {
     <Card className="bg-background/80 backdrop-blur-sm">
       <CardContent className="p-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-start">
-            
-            <div className="lg:col-span-3 md:col-span-1">
-              <FormField
-                control={form.control}
-                name="from"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>From</FormLabel>
-                    <CityCombobox field={field} placeholder="Departure city" name="from"/>
-                    <FormMessage className="text-destructive text-xs fade-in" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="lg:col-span-3 md:col-span-1">
-              <FormField
-                control={form.control}
-                name="to"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>To</FormLabel>
-                    <CityCombobox field={field} placeholder="Destination city" name="to"/>
-                    <FormMessage className="text-destructive text-xs fade-in" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="lg:col-span-2">
-              <FormField
-                control={form.control}
-                name="journeyDate"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>Journey Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal h-11",
-                              !field.value && "text-muted-foreground",
-                              fieldState.invalid ? "border-destructive" : ""
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage className="text-destructive text-xs fade-in" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="lg:col-span-2">
-              <FormField
-                control={form.control}
-                name="returnDate"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>Return Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal h-11",
-                              !field.value && "text-muted-foreground",
-                               fieldState.invalid ? "border-destructive" : ""
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date (Optional)</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < (form.getValues("journeyDate") || new Date())}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                     <FormMessage className="text-destructive text-xs fade-in" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="lg:col-span-2 grid grid-cols-2 gap-2">
-               <FormField
-                control={form.control}
-                name="passengers"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Passengers</FormLabel>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <FormControl>
-                            <Button variant="outline" className="w-full justify-start font-normal h-11">
-                                <Users className="mr-2 h-4 w-4" />
-                                {field.value}
-                            </Button>
-                            </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-48">
-                            <div className="flex items-center justify-between">
-                                <span className="font-medium">Passengers</span>
-                                <div className="flex items-center gap-1">
-                                    <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7"
-                                    onClick={() => field.value > 1 && field.onChange(field.value - 1)}
-                                    >
-                                        <Minus className="h-4 w-4" />
-                                    </Button>
-                                    <span className="w-6 text-center">{field.value}</span>
-                                    <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7"
-                                    onClick={() => field.value < 8 && field.onChange(field.value + 1)}
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                    <FormMessage className="text-destructive text-xs fade-in" />
-                  </FormItem>
-                )}
-              />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start">
+              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="travelClass"
+                  name="from"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Class</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="h-11">
-                             <div className="flex items-center gap-2">
-                                <Briefcase className="h-4 w-4" />
-                                <SelectValue placeholder="Select class" />
-                             </div>
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="economy">Economy</SelectItem>
-                          <SelectItem value="business">Business</SelectItem>
-                          <SelectItem value="first">First</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <FormLabel>From</FormLabel>
+                      <CityCombobox field={field} placeholder="Departure city" name="from"/>
                       <FormMessage className="text-destructive text-xs fade-in" />
                     </FormItem>
                   )}
                 />
-            </div>
-            
+                <FormField
+                  control={form.control}
+                  name="to"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>To</FormLabel>
+                      <CityCombobox field={field} placeholder="Destination city" name="to"/>
+                      <FormMessage className="text-destructive text-xs fade-in" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-            <Button type="submit" className="lg:col-span-12 w-full mt-4" size="lg">
+              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="journeyDate"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Journey Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal h-11",
+                                !field.value && "text-muted-foreground",
+                                fieldState.invalid ? "border-destructive" : ""
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage className="text-destructive text-xs fade-in" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="returnDate"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Return Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal h-11",
+                                !field.value && "text-muted-foreground",
+                                fieldState.invalid ? "border-destructive" : ""
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Optional</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date < (form.getValues("journeyDate") || new Date())}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage className="text-destructive text-xs fade-in" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="lg:col-span-1 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="passengers"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Passengers</FormLabel>
+                      <Popover>
+                          <PopoverTrigger asChild>
+                              <FormControl>
+                              <Button variant="outline" className="w-full justify-start font-normal h-11">
+                                  <Users className="mr-2 h-4 w-4" />
+                                  {field.value}
+                              </Button>
+                              </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-48">
+                              <div className="flex items-center justify-between">
+                                  <span className="font-medium">Passengers</span>
+                                  <div className="flex items-center gap-1">
+                                      <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      type="button"
+                                      className="h-7 w-7"
+                                      onClick={() => field.value > 1 && field.onChange(field.value - 1)}
+                                      >
+                                          <Minus className="h-4 w-4" />
+                                      </Button>
+                                      <span className="w-6 text-center">{field.value}</span>
+                                      <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      type="button"
+                                      className="h-7 w-7"
+                                      onClick={() => field.value < 8 && field.onChange(field.value + 1)}
+                                      >
+                                          <Plus className="h-4 w-4" />
+                                      </Button>
+                                  </div>
+                              </div>
+                          </PopoverContent>
+                      </Popover>
+                      <FormMessage className="text-destructive text-xs fade-in" />
+                    </FormItem>
+                  )}
+                />
+                  <FormField
+                    control={form.control}
+                    name="travelClass"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Class</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11">
+                              <div className="flex items-center gap-2">
+                                  <Briefcase className="h-4 w-4" />
+                                  <SelectValue placeholder="Select class" />
+                              </div>
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="economy">Economy</SelectItem>
+                            <SelectItem value="business">Business</SelectItem>
+                            <SelectItem value="first">First</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-destructive text-xs fade-in" />
+                      </FormItem>
+                    )}
+                  />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full mt-4" size="lg">
               Search Flights
             </Button>
           </form>
@@ -343,3 +341,5 @@ export function SearchForm() {
     </Card>
   );
 }
+
+    
