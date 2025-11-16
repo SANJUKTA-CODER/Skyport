@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -37,26 +38,16 @@ export default function WelcomePage() {
                     <h1 className="text-5xl md:text-7xl font-black tracking-tight text-glow font-headline uppercase">
                         SKYPORT
                     </h1>
-                    <p className="text-xl md:text-2xl mt-2 mb-6 opacity-95 font-light">
+                    <p className="text-xl md:text-2xl mt-2 mb-8 opacity-95 font-light">
                         Your Gateway to the Skies
-                    </p>
-                    <p className="text-base md:text-lg max-w-2xl mx-auto mb-6">
-                        Book your air travel with speed, simplicity, and smarter search.
                     </p>
                 </div>
                 
-                <div className="fade-in-delay-1 bg-black/20 backdrop-blur-sm rounded-xl p-6 md:p-8 space-y-6">
+                <div className="fade-in-delay-1 bg-black/20 backdrop-blur-sm rounded-xl p-6 md:p-8 space-y-6 max-w-3xl mx-auto">
+                    <h2 className="text-2xl font-bold">Welcome to SkyPort</h2>
                     <p className="text-base md:text-lg">
-                        SkyPort brings Indian travellers the fastest way to compare airlines, pick seats visually, and pay securely – all in one elegant interface built for comfort and clarity.
+                        Discover a smarter way to book flights. Our platform offers fast, intuitive search, seamless booking, and secure payments with UPI & cards. Enjoy real-time updates for a smooth and stress-free travel experience, from start to finish.
                     </p>
-                    <div>
-                        <h2 className="text-2xl font-bold mb-4">Why SkyPort?</h2>
-                        <ul className="space-y-3 text-left inline-block">
-                            <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-accent" /> Instant flight comparisons</li>
-                            <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-accent" /> Visual seat selection</li>
-                            <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-accent" /> Unified Indian-rupee checkout</li>
-                        </ul>
-                    </div>
                 </div>
 
                 <div className="mt-10 fade-in-delay-2">
